@@ -33,7 +33,7 @@ public class DeviceListActivity extends Activity {
     private static final boolean D = true;
 
     // Constants
-    public static final long SCAN_PERIOD = 8*1000;	// Stops scanning after a pre-defined scan period.
+    public static final long SCAN_PERIOD = 3*1000;	// Stops scanning after a pre-defined scan period.
 
     // Return Intent extra
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
@@ -42,7 +42,6 @@ public class DeviceListActivity extends Activity {
     private ActivityHandler mActivityHandler;
     private BluetoothAdapter mBtAdapter;
     private BleManager mBleManager;
-   // private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
     private ArrayList<BluetoothDevice> mDevices = new ArrayList<BluetoothDevice>();
 
@@ -127,8 +126,8 @@ public class DeviceListActivity extends Activity {
         // Indicate scanning in the title
         setProgressBarIndeterminateVisibility(false);
         setTitle(R.string.bt_title);
-        // Show scan button
         mBleManager.scanLeDevice(false);
+        finish();
     }
 
     /**
@@ -177,7 +176,7 @@ public class DeviceListActivity extends Activity {
                 }
             };
 
-    private void goConn(String deviqaceName, String deviceAddr){
+    private void goConn(String deviceName, String deviceAddr){
         mBtAdapter.cancelDiscovery();
         // Get the device MAC address, which is the last 17 chars in the View
         String address = deviceAddr;
@@ -197,6 +196,7 @@ public class DeviceListActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what) {}
+
             super.handleMessage(msg);
         }
     }

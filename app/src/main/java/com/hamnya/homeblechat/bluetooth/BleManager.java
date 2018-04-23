@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 import com.hamnya.homeblechat.utils.Logs;
 
@@ -282,7 +283,10 @@ public class BleManager {
 							stopScanning();
 						}
 					}, SCAN_PERIOD);
-				
+
+
+				Log.d("BleManager", mHandler.toString()+"/"+STATE_SCANNING);
+
 				mHandler.obtainMessage(MESSAGE_STATE_CHANGE, STATE_SCANNING, 0).sendToTarget();
 				isScanStarted = true;
 			}

@@ -1,8 +1,10 @@
 package com.hamnya.homeblechat;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -23,12 +25,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hamnya.homeblechat.bluetooth.BleManager;
 import com.hamnya.homeblechat.service.BTCTemplateService;
 import com.hamnya.homeblechat.utils.AppSettings;
 import com.hamnya.homeblechat.utils.Constants;
@@ -36,6 +41,7 @@ import com.hamnya.homeblechat.utils.IFragmentListener;
 import com.hamnya.homeblechat.utils.Logs;
 import com.hamnya.homeblechat.utils.RecycleUtils;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
    
     //Message Send
 
-
     TextView mTextChat;
     EditText mEditChat;
     Button mBtnSend;
@@ -74,29 +79,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
         //----- System, Context
         mContext = this;	//.getApplicationContext();
         mActivityHandler = new ActivityHandler();
+
         AppSettings.initializeAppSettings(mContext);
 
-        setContentView(R.layout.activity_main);
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
 //        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-
 
         // Setup views
 
         setView();
         // Do data initialization after service started and binded
         doStartService();
-
-
-
+        doScan();
     }
+
 
     private void setView(){
 
@@ -208,6 +209,11 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         finalizeActivity();
+
+        if (mServiceConn != null) {
+            unbindService(mServiceConn);
+        }
+
     }
 
     @Override
@@ -230,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_scan:
                 // Launch the DeviceListActivity to see devices and do scan
                 doScan();
+
                 return true;
             case R.id.action_discoverable:
                 // Ensure this device is discoverable by others
@@ -398,10 +405,13 @@ public class MainActivity extends AppCompatActivity {
      *	Handler, Callback, Sub-classes
      ******************************************************/
 
+
     public class ActivityHandler extends Handler {
         @Override
         public void handleMessage(Message msg)
         {
+
+            Log.d("냠냠", msg.toString());
             switch(msg.what) {
                 // Receives BT state messages from service
                 // and updates BT state UI
@@ -462,6 +472,7 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
         }
     }	// End of class ActivityHandler
+
 
     /**
      * Auto-refresh Timer
