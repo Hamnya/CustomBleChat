@@ -270,6 +270,10 @@ public class BTCTemplateService extends Service {
 		}
 	}
 
+	public void disConnDevice(){
+		mBleManager.disconnect();
+	}
+
     /**
      * Connect to a remote device.
      * @param device  The BluetoothDevice to connect

@@ -44,7 +44,6 @@ public class DeviceListActivity extends Activity {
     private BleManager mBleManager;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
-
     private ArrayList<BluetoothDevice> mDevices = new ArrayList<BluetoothDevice>();
 
     // UI stuff
@@ -184,8 +183,8 @@ public class DeviceListActivity extends Activity {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
             // Cancel discovery because it's costly and we're about to connect
             mBtAdapter.cancelDiscovery();
-
-            // Get the device MAC address, which is the last 17 chars in the View
+            // 자동 페어링 위해서 해제
+        /*    // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             if(info != null && info.length() > 16) {
                 String address = info.substring(info.length() - 17);
@@ -198,7 +197,7 @@ public class DeviceListActivity extends Activity {
                 // Set result and finish this Activity
                 setResult(Activity.RESULT_OK, intent);
                 finish();
-            }
+            }*/
         }
     };
 
@@ -216,15 +215,40 @@ public class DeviceListActivity extends Activity {
                         public void run() {
                             if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                                 if(!checkDuplicated(device)) {
+
                                     mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                                     mNewDevicesArrayAdapter.notifyDataSetChanged();
                                     mDevices.add(device);
+
+                                    if(device.getName() != null && mDevices != null){
+                                        if(device.getName().equalsIgnoreCase("CASO")) {
+                                            goConn(device.getName(), device.getAddress());
+
+                                        }
+                                    }
+
                                 }
                             }
                         }
                     });
                 }
             };
+
+    private void goConn(String deviceName, String deviceAddr){
+        mBtAdapter.cancelDiscovery();
+        // Get the device MAC address, which is the last 17 chars in the View
+        String address = deviceAddr;
+        Log.d(TAG, "User selected device : " + address);
+
+        // Create the result Intent and include the MAC address
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+
+        // Set result and finish this Activity
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+
+    }
 
     public class ActivityHandler extends Handler {
         @Override

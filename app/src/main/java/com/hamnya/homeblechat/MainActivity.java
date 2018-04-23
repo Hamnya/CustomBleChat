@@ -165,6 +165,10 @@ public class MainActivity extends AppCompatActivity {
     // Show messages from remote
     public void showMessage(String message) {
         if(message != null && message.length() > 0) {
+
+            if(message.equalsIgnoreCase("STOP")) {
+                mService.disConnDevice();
+            }
             long current = System.currentTimeMillis();
 
             if(current - mLastReceivedTime > NEW_LINE_INTERVAL) {
@@ -174,9 +178,10 @@ public class MainActivity extends AppCompatActivity {
             int scrollamout = mTextChat.getLayout().getLineTop(mTextChat.getLineCount()) - mTextChat.getHeight();
             if (scrollamout > mTextChat.getHeight())
                 mTextChat.scrollTo(0, scrollamout);
-
             mLastReceivedTime = current;
         }
+
+
     }
 
     @Override
