@@ -269,7 +269,9 @@ public class BTCTemplateService extends Service {
 			}
 		}
 	}
-
+    /**
+     * disconnect to a remote device.
+     */
 	public void disConnDevice(){
 		mBleManager.disconnect();
 	}
